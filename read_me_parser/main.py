@@ -55,20 +55,20 @@ with open(readme_path, 'r') as f:
 # print(json.dumps(root_title, cls=EnhancedJSONEncoder, indent=4))
 @dataclass(frozen=True)
 class TitleAndContentCompact:
-    title: str
-    title_id: str
-    title_level: int
-    content: str
-    sub_content: list[TitleAndContentCompact]
+    Title: str
+    TitleId: str
+    TitleLevel: int
+    Content: str
+    SubContents: list[TitleAndContentCompact]
 
 
 def compact_title_and_content(title_and_content: TitleAndContent) -> TitleAndContentCompact:
     return TitleAndContentCompact(
-        title=title_and_content.title,
-        title_id=title_and_content.title_id,
-        title_level=title_and_content.title_level,
-        content=''.join(title_and_content.content),
-        sub_content=[compact_title_and_content(sub) for sub in title_and_content.sub_content]
+        Title=title_and_content.title,
+        TitleId=title_and_content.title_id,
+        TitleLevel=title_and_content.title_level,
+        Content=''.join(title_and_content.content),
+        SubContents=[compact_title_and_content(sub) for sub in title_and_content.sub_content]
     )
 
 root_compact = compact_title_and_content(root_title)
