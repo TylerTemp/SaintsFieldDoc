@@ -28,7 +28,7 @@ readme_path = os.path.join(os.path.dirname(__file__), 'SaintsField', 'README.md'
 root_title: TitleAndContent | None = None
 title_chain: list[TitleAndContent] = []
 
-with open(readme_path, 'r') as f:
+with open(readme_path, 'r', encoding='utf-8') as f:
     for line in f:
         if line.startswith('#') and not line.startswith('#if ') and not line.startswith('#endif'):
             split_header_md = line.split()
@@ -67,9 +67,18 @@ def compact_title_and_content(title_and_content: TitleAndContent) -> TitleAndCon
         Title=title_and_content.title,
         TitleId=title_and_content.title_id,
         TitleLevel=title_and_content.title_level,
-        Content=''.join(title_and_content.content),
+        Content=''.join(title_and_content.content).strip(),
         SubContents=[compact_title_and_content(sub) for sub in title_and_content.sub_content]
     )
 
 root_compact = compact_title_and_content(root_title)
-print(json.dumps(root_compact, cls=EnhancedJSONEncoder, indent=4))
+
+list_compact: list[TitleAndContentCompact] = []
+root_node = root_compact
+sub_list = list(root_compact.SubContents)
+root_compact.SubContents.clear()
+
+list_compact.append(root_node)
+list_compact.extend(sub_list)
+
+print(json.dumps(list_compact, cls=EnhancedJSONEncoder, indent=4))
