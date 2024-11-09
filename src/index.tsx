@@ -16,9 +16,7 @@ import { CssBaseline } from '@mui/material'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<>
     <ThemeProvider>
         <CssBaseline />
-        <ErrorBoundary>
-            
-            <p>Hi</p>
+        <ErrorBoundary>            
             {/* <ToastContainer /> */}
             <Router>
                 <HelmetProvider>

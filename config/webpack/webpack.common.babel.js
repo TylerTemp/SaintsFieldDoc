@@ -12,14 +12,14 @@ module.exports = () => ({
     module: {
         rules: [
             {
-                test: /\.js|jsx$/,
+                test: /\.js$|jsx$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader'
                 }
             },
             {
-                test: /\.ts|tsx?$/,
+                test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'ts-loader',
@@ -30,7 +30,7 @@ module.exports = () => ({
             //     use: ['style-loader', 'css-loader'],
             // },
             {
-                test: /\.css/,
+                test: /\.css$/,
                 exclude: /node_modules/,
                 use: [
                     { loader: 'style-loader' },
@@ -46,7 +46,11 @@ module.exports = () => ({
                 ],
             },
             {
-                test: /\.css/,
+                test: /\.json$/,
+                type: "json"       
+            },
+            {
+                test: /\.css$/,
                 include: /node_modules/,
                 use: [
                     { loader: 'style-loader' },
@@ -69,11 +73,11 @@ module.exports = () => ({
                           esModule: true,
                         },
                     },
-                    'postcss-loader',
+                    // 'postcss-loader',
                     {
                         loader: 'sass-loader',
                         options: {
-                        implementation: require('sass'),
+                            implementation: require('sass'),
                         },
                     },
                 ],
@@ -157,7 +161,7 @@ module.exports = () => ({
     },
     resolve: {
         modules: ['src', 'node_modules'],
-        extensions: ['*', '.js', '.jsx', '.ts', '.tsx', '.scss', '.css'],
+        extensions: ['*', '.js', '.jsx', '.ts', '.tsx', '.scss', '.css', '.json'],
         alias: {
             '~': path.resolve(paths.root, 'src/') // added this: ts alias import
         },
