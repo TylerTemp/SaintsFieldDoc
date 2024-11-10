@@ -158,8 +158,8 @@ export default () => {
 
         <Box sx={{ display: 'flex'}}>
             <Box sx={{minWidth: 0}}>
-                <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback}>
-                    <Paper elevation={3} sx={{overflowX: 'hidden'}}>
+                <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback} style={{position: 'sticky', top: 0}}>
+                    <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)'}}>
                         <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
                             [RotateStyle.rotate180]: !enableResize,
                         })}}/>}>
