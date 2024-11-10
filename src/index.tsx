@@ -6,6 +6,7 @@ import ErrorBoundary from '~/Components/ErrorBoundary'
 import ThemeProvider from '~/Components/Theme/ThemeProvider'
 import Layout from './Components/Layout'
 import Section from './Pages/Section'
+import Search from './Pages/Search'
 // import NotFound from './Pages/NotFound'
 // import { ToastContainer } from 'react-toastify';
 
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<>
                     <Routes>
                         <Route path="/" element={<Layout />}>
                             <Route index element={<Section />} />
+                            <Route path="/search" element={<Search />} />
                             <Route path="*" element={<Section />} />
                         </Route>
                     </Routes>

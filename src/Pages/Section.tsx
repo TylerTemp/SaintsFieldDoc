@@ -20,6 +20,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { PrefixUri } from '~/Utils/Util';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import {default as MuiLink} from '@mui/material/Link/Link';
+import { Helmet } from 'react-helmet-async';
 // import { dark } from 'react-syntax-highlighter/dist/cjs/al'
 
 interface BreadcrumbInfo {
@@ -93,6 +94,10 @@ export default () => {
     }
 
     return (<Container maxWidth="xl">
+        <Helmet>
+            <title>{searchTarget.Title} | SaintsField</title>
+        </Helmet>
+
         <Box>
             <Breadcrumbs>{breadcrumbInfos.map(({TitleId, Title, URI, HasContent}, index) => {
                 if(TitleId === "") {
@@ -114,6 +119,7 @@ export default () => {
             </Typography>
             {searchTarget.Content !== "" && <>
                 <Markdown remarkPlugins={[remarkGfm]} components={{
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     code({ node, inline, className, children, ...props }: any) {
                         const match = /language-(\w+)/.exec(className || '');
 
@@ -127,7 +133,7 @@ export default () => {
                             </code>
                         );
                     },
-                    a({ node, children, href, ...props }: any) {
+                    a({ node, children, href, ...props }) {
                         if (children && typeof children === 'object' && 'type' in children && children['type'] === 'img') {
                             if (children['props']['alt'] === 'video') {
                                 const src = children['props']['src'];
@@ -138,25 +144,25 @@ export default () => {
                         }
                         return <a href={href} {...props}>{children}</a>
                     },
-                    h1({ node, children, ...props }) {
+                    h1({ children }) {
                         return <Typography variant="h1" gutterBottom>{children}</Typography>;
                     },
-                    h2({ node, children, ...props }) {
+                    h2({ children }) {
                         return <Typography variant="h2" gutterBottom>{children}</Typography>;
                     },
-                    h3({ node, children, ...props }) {
+                    h3({ children }) {
                         return <Typography variant="h3" gutterBottom>{children}</Typography>;
                     },
-                    h4({ node, children, ...props }) {
+                    h4({ children }) {
                         return <Typography variant="h4" gutterBottom>{children}</Typography>;
                     },
-                    h5({ node, children, ...props }) {
+                    h5({ children }) {
                         return <Typography variant="h5" gutterBottom>{children}</Typography>;
                     },
-                    h6({ node, children, ...props }) {
+                    h6({ children }) {
                         return <Typography variant="h6" gutterBottom>{children}</Typography>;
                     },
-                    p({ node, children, ...props }) {
+                    p({ children }) {
                         return <Typography variant="body1" gutterBottom>{children}</Typography>;
                     },
                 }}>{searchTarget.Content}</Markdown>
