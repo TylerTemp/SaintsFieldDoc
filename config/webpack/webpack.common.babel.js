@@ -1,7 +1,7 @@
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
-
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import paths from './paths';
 
 module.exports = () => ({
@@ -38,16 +38,13 @@ module.exports = () => ({
                       loader: 'css-loader',
                       options: {
                         modules: {
+                            namedExport: false,
                             localIdentName:'[name]__[local]--[hash:base64:5]',
                         },
                         sourceMap: true,
                       },
                     },
                 ],
-            },
-            {
-                test: /\.json$/,
-                type: "json"       
             },
             {
                 test: /\.css$/,
@@ -60,6 +57,11 @@ module.exports = () => ({
                 ],
             },
             {
+                test: /\.json$/,
+                type: "json"
+            },
+
+            {
                 test: /\.scss$/,
                 use: [
                     'style-loader',
@@ -67,13 +69,14 @@ module.exports = () => ({
                         loader: 'css-loader',
                         options: {
                           modules: {
-                              localIdentName:'[name]__[local]--[hash:base64:5]',
+                                namedExport: false,
+                                localIdentName:'[name]__[local]--[hash:base64:5]',
                           },
                           sourceMap: true,
                           esModule: true,
                         },
                     },
-                    // 'postcss-loader',
+                    'postcss-loader',
                     {
                         loader: 'sass-loader',
                         options: {
@@ -168,6 +171,7 @@ module.exports = () => ({
     },
     plugins: [
         new webpack.ProgressPlugin(),
+        new MiniCssExtractPlugin(),
         new HtmlWebpackPlugin({
             template: paths.templatePath,
             minify: {

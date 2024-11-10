@@ -30,6 +30,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<>
                 </HelmetProvider>
             </Router>
         </ErrorBoundary>
-     </ThemeProvider>
+    </ThemeProvider>
 </>);
 
