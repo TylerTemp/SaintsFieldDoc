@@ -137,7 +137,7 @@ export default () => {
     const onResizeControlClick = () => {
         setEnableResize(enabled => !enabled);
         if(enableResize) {
-            resizableRef.current?.updateSize({width: 70});
+            resizableRef.current?.updateSize({width: 50});
         }
         else {
             resizableRef.current?.updateSize({width: Math.max(resizableSize, DefaultWidth)});
@@ -155,13 +155,10 @@ export default () => {
             <Box sx={{ position: 'sticky', left: 0, top: 0}}>
                 <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback}>
                     <Paper elevation={3} sx={{overflowX: 'hidden'}}>
-                        <Button fullWidth onClick={onResizeControlClick}>
-                            <span className={classNames({
-                                [RotateStyle.rotateBase]: true,
+                        <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
                                 [RotateStyle.rotate180]: !enableResize,
-                            })}>
-                                <MenuOpenIcon/>
-                            </span>
+                            })}}/>}>
+                            {enableResize && "Hide"}
                         </Button>
                         <Collapse in={enableResize}>
                             <Divider />
