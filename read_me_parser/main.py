@@ -53,7 +53,7 @@ with open(readme_path, 'r', encoding='utf-8') as f:
             title_chain[-1].content.append(line)
 
 # print(json.dumps(root_title, cls=EnhancedJSONEncoder, indent=4))
-@dataclass(frozen=True)
+@dataclass()
 class TitleAndContentCompact:
     Title: str
     TitleId: str
@@ -75,6 +75,7 @@ root_compact = compact_title_and_content(root_title)
 
 list_compact: list[TitleAndContentCompact] = []
 root_node = root_compact
+root_node.TitleId = ""
 sub_list = list(root_compact.SubContents)
 root_compact.SubContents.clear()
 
