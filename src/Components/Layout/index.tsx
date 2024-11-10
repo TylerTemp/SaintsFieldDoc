@@ -1,13 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-// import Req from "~/Utils/Req";
-// import { Menu } from 'antd';
-// import Companies, { CompanyIcon } from './Companies';
-
 import { useContext, useState, useMemo, useRef } from 'react';
 import { Context, ThemeType } from "~/Components/Theme/ThemeProvider";
-// import Style from "./index.css";
-// import { useTheme } from '@mui/material';
-// import Style from "./index.css";
+import { useTheme } from '@mui/material/styles';
 import ReadMeData from "~/Data/ReadMe.json";
 import type { TitleAndContent } from "~/Data/Types";
 import List from '@mui/material/List/List';
@@ -32,6 +26,7 @@ import { PrefixUri } from '~/Utils/Util';
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import ListItemIcon from '@mui/material/ListItemIcon/ListItemIcon';
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubContents}, prefix=null, pl=0}: {titleAndContent: TitleAndContent, prefix: string|null, pl?: number}) => {
 
@@ -111,7 +106,8 @@ const EnableOtherType: Partial<Enable> = {
     topLeft: false,
 }
 
-const DefaultWidth = 200;
+const DefaultWidth = 180;
+const MinWidth = 50;
 
 
 export default () => {
@@ -119,13 +115,19 @@ export default () => {
 
     const { theme, setTheme } = useContext(Context);
 
-    // const curTheme = useTheme();
+    const curTheme = useTheme();
+    const matches = useMediaQuery(curTheme.breakpoints.down('sm'));
+
+    const initIsMobile: boolean = useMemo(() => {
+        return matches;
+    }, []);
 
     const readMe: TitleAndContent[] = ReadMeData;
 
     const resizableRef = useRef<Resizable | null>(null);
 
     const [resizableSize, setResizableSize] = useState(DefaultWidth);
+    const [enableResize, setEnableResize] = useState<boolean>(!initIsMobile);
 
     const ResizeCallback: ResizeCallback = (event: MouseEvent | TouchEvent, direction: unknown, elementRef: HTMLElement, delta: NumberSize): void => {
         // console.log(delta.width);
@@ -137,14 +139,17 @@ export default () => {
     const onResizeControlClick = () => {
         setEnableResize(enabled => !enabled);
         if(enableResize) {
-            resizableRef.current?.updateSize({width: 50});
+            resizableRef.current?.updateSize({width: MinWidth});
         }
         else {
             resizableRef.current?.updateSize({width: Math.max(resizableSize, DefaultWidth)});
         }
     }
 
-    const [enableResize, setEnableResize] = useState<boolean>(true);
+    // const onHidePanel = () => {
+    //     setEnableResize(false);
+    //     resizableRef.current?.updateSize({width: MinWidth});
+    // }
 
     return <>
         <Box sx={{position: 'fixed', top: 0, right: 0}}>
@@ -152,12 +157,12 @@ export default () => {
         </Box>
 
         <Box sx={{ display: 'flex'}}>
-            <Box sx={{ position: 'sticky', left: 0, top: 0}}>
-                <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback}>
+            <Box sx={{minWidth: 0}}>
+                <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback}>
                     <Paper elevation={3} sx={{overflowX: 'hidden'}}>
                         <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
-                                [RotateStyle.rotate180]: !enableResize,
-                            })}}/>}>
+                            [RotateStyle.rotate180]: !enableResize,
+                        })}}/>}>
                             {enableResize && "Hide"}
                         </Button>
                         <Collapse in={enableResize}>
@@ -167,7 +172,7 @@ export default () => {
                     </Paper>
                 </Resizable>
             </Box>
-            <Box sx={{width: 1}}>
+            <Box sx={{width: 1, minWidth: 0}}>
                 <Outlet />
             </Box>
         </Box>

@@ -9,12 +9,8 @@ import { Link, useLocation } from 'react-router-dom';
 import ReadMeData from "~/Data/ReadMe.json";
 import type { TitleAndContent } from "~/Data/Types";
 import Box from '@mui/material/Box/Box';
-import Markdown from 'react-markdown'
-import remarkGfm from 'remark-gfm'
 import Typography from '@mui/material/Typography';
 
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import Container from '@mui/material/Container/Container';
 import HomeIcon from '@mui/icons-material/Home';
 import { PrefixUri } from '~/Utils/Util';
@@ -107,16 +103,16 @@ export default () => {
                 const isLast: boolean = index === breadcrumbInfos.length - 1;
                 if(isLast || !HasContent) {
                     return <Typography key={TitleId} sx={{ color: 'text.primary' }}>
-                        <Markdown remarkPlugins={[remarkGfm]} disallowedElements={['p']} unwrapDisallowed>{Title}</Markdown>
+                        <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{Title}</WrapMarkdown>
                     </Typography>;
                 }
                 return <MuiLink key={TitleId} underline="hover" color="inherit" to={URI} component={Link}>
-                    <Markdown remarkPlugins={[remarkGfm]} disallowedElements={['p']} unwrapDisallowed>{Title}</Markdown>
+                    <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{Title}</WrapMarkdown>
                 </MuiLink>;
             })}</Breadcrumbs>
 
-            <Typography variant="h1" gutterBottom>
-                <Markdown remarkPlugins={[remarkGfm]} disallowedElements={['p']} unwrapDisallowed>{searchTarget.Title}</Markdown>
+            <Typography variant="h3" gutterBottom sx={{wordBreak: 'break-all'}}>
+                <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{searchTarget.Title}</WrapMarkdown>
             </Typography>
             {searchTarget.Content !== "" && <WrapMarkdown>{searchTarget.Content}</WrapMarkdown>}
         </Box>

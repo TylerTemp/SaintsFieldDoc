@@ -14,11 +14,9 @@ import type { TitleAndContent } from "~/Data/Types";
 import { PrefixUri } from "~/Utils/Util";
 import MiniSearch, { type SearchResult } from 'minisearch'
 import Divider from "@mui/material/Divider/Divider";
-import {default as MuiLink} from "@mui/material/Link/Link";
 import { Link } from "react-router-dom";
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import Typography from '@mui/material/Typography';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionActions from '@mui/material/AccordionActions';
@@ -71,16 +69,6 @@ const ExtractSearchable = ({Title, TitleId, Content, SubContents}: TitleAndConte
 }
 
 
-type IdToSearchable = {
-    [term: string]: Searchable;
-};
-
-interface WrapSearchResult {
-    Source: Searchable,
-    Result: SearchResult,
-}
-
-
 export default () => {
 
     const {startDebounce, debouncing} = useDebounce(500);
@@ -106,7 +94,7 @@ export default () => {
         const miniSearch = new MiniSearch({
             fields: ['title', 'content'], // fields to index for full-text search
             storeFields: ['title', 'content'] // fields to return with search results
-          });
+        });
         miniSearch.addAll(searchables);
         return miniSearch;
     }, []);
@@ -156,7 +144,7 @@ export default () => {
 
         {searchResults.length === 0 && !debouncing && <Box sx={{minHeight: 200, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Empty>
-            {searchInput === ""? "Input something to search": "Nothing found"}
+                {searchInput === ""? "Input something to search": "Nothing found"}
             </Empty>
         </Box>}
 

@@ -11,7 +11,9 @@ export default (durationMS: number): DebounceResult => {
     const [debouncing, setDebouncing] = useState<boolean>(false);
 
     const cancelDebounce = (): void => {
-        debounce !== null && clearTimeout(debounce);
+        if(debounce !== null) {
+            clearTimeout(debounce);
+        }
     };
     const startDebounce = (callback: () => void) => setDebounce(oldTimeout => {
         if (oldTimeout !== null) {
