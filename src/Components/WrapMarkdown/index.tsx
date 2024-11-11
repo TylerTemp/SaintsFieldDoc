@@ -7,6 +7,7 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { PropsWithChildren } from 'react';
 import Style from './index.scss';
 import classNames from 'classnames';
+import Link from '@mui/material/Link/Link';
 
 type MarkdownProps = Pick<Options, "disallowedElements" | "unwrapDisallowed">;
 
@@ -26,16 +27,22 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
                 </code>
             );
         },
-        a({ node, children, href, ...props }) {
-            if (children && typeof children === 'object' && 'type' in children && children['type'] === 'img') {
-                if (children['props']['alt'] === 'video') {
-                    const src = children['props']['src'];
-                    return <video muted autoPlay poster={src} controls loop className={Style.video}>
-                        <source src={href}></source>
-                    </video>;
-                }
+        a({ children, href }) {
+            // console.log(children)
+            if(children && typeof children === 'object' && 'type' in children && 'props' in children && 'alt' in children['props'] && children['props']['alt'] === 'video') {
+                const src = children['props']['src'];
+                return <video muted autoPlay poster={src} controls loop className={Style.video}>
+                    <source src={href}></source>
+                </video>;
             }
-            return <a href={href} {...props}>{children}</a>
+            if (children && typeof children === 'object' && 'type' in children && children['type'] === 'img' && children['props']['alt'] === 'video') {
+                const src = children['props']['src'];
+                return <video muted autoPlay poster={src} controls loop className={Style.video}>
+                    <source src={href}></source>
+                </video>;
+            }
+            return <Link href={href}>{children}</Link>
+            // return <a href={href}>{children}</a>
         },
         img({ node, children, ...props }) {
             // console.log(node, props);
