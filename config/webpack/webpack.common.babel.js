@@ -117,16 +117,16 @@ module.exports = () => ({
             },
             {
                 test: /\.(woff|woff2)$/,
-                exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            prefix: 'font',
-                            limit: 5000,
-                        }
-                    },
-                ],
+                include: /node_modules/,
+                type: 'asset',   // <-- Assets module - asset
+                parser: {
+                  dataUrlCondition: {
+                    maxSize: 8 * 1024 // 8kb
+                  }
+                },
+                generator: {  //If emitting file, the file path is
+                  filename: 'fonts/[hash][ext][query]'
+                }
             },
             {
                 test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
