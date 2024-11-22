@@ -157,21 +157,28 @@ export default () => {
         </Box>
 
         <Box sx={{ display: 'flex'}}>
-            <Box sx={{minWidth: 0}}>
-                <Resizable enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}} defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }} ref={ref => resizableRef.current = ref} onResize={ResizeCallback} style={{position: 'sticky', top: 0}}>
-                    <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)'}}>
-                        <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
-                            [RotateStyle.rotate180]: !enableResize,
-                        })}}/>}>
-                            {enableResize && "Hide"}
-                        </Button>
-                        <Collapse in={enableResize}>
-                            <Divider />
-                            {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
-                        </Collapse>
-                    </Paper>
-                </Resizable>
-            </Box>
+            {/* <Box sx={{minWidth: 0}}> */}
+            <Resizable
+                enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
+                defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
+                ref={ref => resizableRef.current = ref}
+                onResize={ResizeCallback}
+                // style={{position: 'sticky', top: 0}}
+                style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}
+            >
+                <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)'}}>
+                    <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
+                        [RotateStyle.rotate180]: !enableResize,
+                    })}}/>}>
+                        {enableResize && "Hide"}
+                    </Button>
+                    <Collapse in={enableResize}>
+                        <Divider />
+                        {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
+                    </Collapse>
+                </Paper>
+            </Resizable>
+            {/* </Box> */}
             <Box sx={{width: 1, minWidth: 0}}>
                 <Outlet />
             </Box>
