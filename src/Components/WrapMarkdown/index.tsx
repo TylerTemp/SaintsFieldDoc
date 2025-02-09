@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import {Prism, SyntaxHighlighterProps} from 'react-syntax-highlighter';
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { PropsWithChildren } from 'react';
+import Tip from './GithubQuote/Tip';
+import Important from './GithubQuote/Important';
 import Style from './index.scss';
 import classNames from 'classnames';
 import Link from '@mui/material/Link/Link';
@@ -91,7 +93,49 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
             return <Typography variant="body1" gutterBottom>{children}</Typography>;
         },
         blockquote({ children}) {
-            console.log(children)
+            // console.log(children)
+            // console.log(typeof children);
+            // console.log(children);
+            if(children && typeof children === 'object') {
+                console.log(children);
+
+                const childArray = children as Array<unknown>;
+                if(childArray && childArray.length == 3 && childArray[0] === '\n' && childArray[2] === '\n') {
+                    const {props} = childArray[1] as {
+                        props: {
+                            children: string[]
+                        }
+                    };
+
+                    if(props && props.children && props.children.length >= 1) {
+                        const [firstChild, ...leftChildren] = props.children;
+                        console.log(firstChild);
+                        const regex = /\[!(\w+)\]\n(.*?)$/;
+                        const matches = firstChild.match(regex);
+                        if (matches) {
+                            const type = matches[1]; // "NOTE"
+                            const noteContent = matches[2]; // "Some Note Content Goes Here\nWith multiple lines"
+                            console.log(type, noteContent);
+                            switch(type.toLowerCase()) {
+                                case "tip":
+                                    return <Tip>{noteContent}{leftChildren}</Tip>;
+                                case "important":
+                                    return <Important>{noteContent}{leftChildren}</Important>;
+                                default:
+                                    break;
+                            }
+                            // return <Tip>{noteContent}{leftChildren}</Tip>;
+                        }
+                    }
+                }
+            }
+            // if(children
+            //     && typeof children === 'object'
+            //     && 'type' in children
+            //     && 'props' in children) {
+            //     const {props, type: childrenType} = children;
+            //     const {alt, src} = props as {alt: string, src: string};
+            // }
             return <blockquote>{children}</blockquote>;
         }
     }}>{String(children)}</Markdown>);

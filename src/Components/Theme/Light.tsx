@@ -1,5 +1,7 @@
 import { createTheme } from "./Basic";
-import { lime, blue } from "@mui/material/colors";
+import { lime, blue, purple } from "@mui/material/colors";
+
+const { palette } = createTheme();
 
 export default createTheme({
     typography: {
@@ -9,7 +11,19 @@ export default createTheme({
     },
 
     palette: {
-        mode: 'light'
+        mode: 'light',
+        // importantQuote: {
+        //     main: purple[500],
+        // }
+        // importantQuote: palette.augmentColor({
+        //     color: purple,
+        // }),
+        importantQuote: palette.augmentColor({
+            color: {
+                main: purple[500],
+            },
+            name: 'importantQuote',
+        })
     },
 
     dim: '#24242482',

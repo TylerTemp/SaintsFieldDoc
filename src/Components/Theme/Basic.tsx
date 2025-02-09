@@ -4,7 +4,19 @@ export { createTheme } from "@mui/material/styles";
 // export { ThemeProvider } from "@mui/material/styles";
 // export { CssBaseline } from "@mui/material";
 
+// import { PaletteOptions } from "@mui/material/styles";
+
+// Extend the PaletteOptions type to include importantQuote
 declare module '@mui/material/styles' {
+    interface Palette {
+      importantQuote: Palette["primary"];
+    }
+
+    interface PaletteOptions {
+      importantQuote: {
+        main: React.CSSProperties['color'];
+      };
+    }
     interface Theme {
       dim: string;
       // status: {
@@ -54,3 +66,13 @@ declare module '@mui/material/styles' {
 //     ThemeProvider,
 //     CssBaseline,
 // };
+
+declare module "@mui/material/Icon" {
+    // interface SvgIconOwnProps {
+    interface SvgIconOwnProps {
+        // color?: "importantQuote";
+        color: {
+          importantQuote: true;
+        }
+    }
+}
