@@ -161,7 +161,7 @@ export default () => {
             <Resizable
                 enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
                 defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
-                ref={ref => resizableRef.current = ref}
+                ref={ref => { resizableRef.current = ref; }}
                 onResize={ResizeCallback}
                 // style={{position: 'sticky', top: 0}}
                 style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}

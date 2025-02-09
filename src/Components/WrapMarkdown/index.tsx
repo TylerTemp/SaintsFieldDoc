@@ -1,8 +1,9 @@
+import React from 'react';
 import Markdown, {type Options} from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Typography from '@mui/material/Typography';
 
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import {Prism, SyntaxHighlighterProps} from 'react-syntax-highlighter';
 import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { PropsWithChildren } from 'react';
 import Style from './index.scss';
@@ -10,6 +11,8 @@ import classNames from 'classnames';
 import Link from '@mui/material/Link/Link';
 
 type MarkdownProps = Pick<Options, "disallowedElements" | "unwrapDisallowed">;
+
+const SyntaxHighlighter = Prism as typeof React.Component<SyntaxHighlighterProps>;
 
 export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChildren<MarkdownProps>) => {
     return (<Markdown disallowedElements={disallowedElements} unwrapDisallowed={unwrapDisallowed} remarkPlugins={[remarkGfm]} components={{
@@ -29,18 +32,36 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
         },
         a({ children, href }) {
             // console.log(children)
-            if(children && typeof children === 'object' && 'type' in children && 'props' in children && 'alt' in children['props'] && children['props']['alt'] === 'video') {
-                const src = children['props']['src'];
-                return <video muted autoPlay poster={src} controls loop className={Style.video}>
-                    <source src={href}></source>
-                </video>;
+            if(children
+                && typeof children === 'object'
+                && 'type' in children
+                && 'props' in children) {
+                const {props, type: childrenType} = children;
+                const {alt, src} = props as {alt: string, src: string};
+
+                // && 'alt' in children['props']
+                // && children['props']['alt'] === 'video'
+                // const src = children['props']['src'];
+
+                if(alt === 'video') {
+                    return <video muted autoPlay poster={src} controls loop className={Style.video}>
+                        <source src={href}></source>
+                    </video>;
+                }
+
+                if(childrenType === 'img' && alt === 'video') {
+                    return <video muted autoPlay poster={src} controls loop className={Style.video}>
+                        <source src={href}></source>
+                    </video>;
+                }
+
             }
-            if (children && typeof children === 'object' && 'type' in children && children['type'] === 'img' && children['props']['alt'] === 'video') {
-                const src = children['props']['src'];
-                return <video muted autoPlay poster={src} controls loop className={Style.video}>
-                    <source src={href}></source>
-                </video>;
-            }
+            // if (children && typeof children === 'object' && 'type' in children && children['type'] === 'img' && children['props']['alt'] === 'video') {
+            //     const src = children['props']['src'];
+            //     return <video muted autoPlay poster={src} controls loop className={Style.video}>
+            //         <source src={href}></source>
+            //     </video>;
+            // }
             return <Link href={href}>{children}</Link>
             // return <a href={href}>{children}</a>
         },
@@ -69,6 +90,10 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
         p({ children }) {
             return <Typography variant="body1" gutterBottom>{children}</Typography>;
         },
+        blockquote({ children}) {
+            console.log(children)
+            return <blockquote>{children}</blockquote>;
+        }
     }}>{String(children)}</Markdown>);
 
 };
