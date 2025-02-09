@@ -102,7 +102,7 @@ export default () => {
                 }
                 const isLast: boolean = index === breadcrumbInfos.length - 1;
                 if(isLast || !HasContent) {
-                    return <Typography key={TitleId} sx={{ color: 'text.primary' }}>
+                    return <Typography key={TitleId} sx={{ color: isLast? 'text.primary': 'text.disabled', textDecoration: isLast? 'underline': undefined }}>
                         <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{Title}</WrapMarkdown>
                     </Typography>;
                 }
