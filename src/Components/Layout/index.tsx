@@ -40,7 +40,7 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
         if(TitleId === '') {
             return pathname === '/';
         }
-        return pathname.startsWith(`/${uri}`);
+        return pathname.startsWith(`/${uri}`) && pathname.replace(`/${uri}`, '').replace('/', '') === '';
     }, [TitleId, pathname]);
     const [open, setOpen] = useState(curActive);
 
