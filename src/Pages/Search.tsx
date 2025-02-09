@@ -71,7 +71,7 @@ const ExtractSearchable = ({Title, TitleId, Content, SubContents}: TitleAndConte
 
 export default () => {
 
-    const {startDebounce, debouncing} = useDebounce(500);
+    const {startDebounce, cancelDebounce, debouncing} = useDebounce(500);
 
     const [searchInput, setSearchInput] = useState<string>("");
 
@@ -110,7 +110,13 @@ export default () => {
     const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
     useEffect(() => {
-        startDebounce(() => setSearchResults(miniSearch.search(searchInput)));
+        if(searchInput === "") {
+            cancelDebounce();
+            setSearchResults([]);
+        }
+        else {
+            startDebounce(() => setSearchResults(miniSearch.search(searchInput)));
+        }
     }, [searchInput])
     // console.log(searchResults);
 

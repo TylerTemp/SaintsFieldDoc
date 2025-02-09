@@ -13,6 +13,7 @@ export default (durationMS: number): DebounceResult => {
     const cancelDebounce = (): void => {
         if(debounce !== null) {
             clearTimeout(debounce);
+            setDebouncing(false);
         }
     };
     const startDebounce = (callback: () => void) => setDebounce(oldTimeout => {
