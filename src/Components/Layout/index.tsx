@@ -166,7 +166,7 @@ export default () => {
                 // style={{position: 'sticky', top: 0}}
                 style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}
             >
-                <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)'}}>
+                <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)', position: 'sticky', top: 0}}>
                     <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
                         [RotateStyle.rotate180]: !enableResize,
                     })}}/>}>
