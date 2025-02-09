@@ -3,6 +3,7 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'path';
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import paths from './paths';
+import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
 
 module.exports = () => ({
     entry: paths.entryPath,
@@ -182,6 +183,7 @@ module.exports = () => ({
                 removeComments: true,
                 removeAttributeQuotes: false
             }
-        })
+        }),
+        new FaviconsWebpackPlugin('./src/Images/favicon.png'),
     ]
 });
