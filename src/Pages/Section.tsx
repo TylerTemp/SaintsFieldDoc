@@ -92,7 +92,9 @@ export default () => {
 
     return (<Container maxWidth="xl">
         <Helmet>
-            <title>{searchTarget.Title} | SaintsField</title>
+            <title>
+                {searchTarget.Title === ''? 'SaintsField': `${searchTarget.Title} | SaintsField`}
+            </title>
         </Helmet>
 
         <Box>

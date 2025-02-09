@@ -36,12 +36,41 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
 
     const uri = PrefixUri(prefix, TitleId);
 
+    // console.log(`prefix=${prefix}, TitleId=${TitleId}, pathname=${pathname}, uri=${uri}`);
+
     const curActive = useMemo(() => {
         if(TitleId === '') {
             return pathname === '/';
         }
-        return pathname.startsWith(`/${uri}`) && pathname.replace(`/${uri}`, '').replace('/', '') === '';
+
+        let preUri = '/' + uri;
+
+        if(!pathname.startsWith(preUri)) {
+            return false;
+        }
+
+        let prePath = pathname;
+        if(!prePath.endsWith('/')) {
+            prePath += '/';
+        }
+
+        if(!preUri.endsWith('/')) {
+            preUri += '/';
+        }
+
+        console.log(prePath, preUri);
+
+        return prePath.startsWith(preUri);
+
+        // if(pathname.startsWith(`/${uri}`)) {
+        //     console.log(`pathname=${pathname}, uri=${uri}, ${pathname.replace(`/${uri}`, '')}`);
+        //     console.log(pathname.replace(`/${uri}`, '').replace('/', ''))
+        // }
+
+        // return pathname.startsWith(`/${uri}`) && (pathname.replace(`/${uri}`, '').replace('/', '') === '');
     }, [TitleId, pathname]);
+
+
     const [open, setOpen] = useState(curActive);
 
     const handleClick = () => {
@@ -58,7 +87,10 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
                     <HomeTwoToneIcon />
                 </ListItemIcon>}
                 <ListItemText
-                    primary={<Markdown remarkPlugins={[remarkGfm]} disallowedElements={['p']} unwrapDisallowed>{Title}</Markdown>}
+                    primary={TitleId === ""
+                        ? "SaintsField"
+                        : <Markdown remarkPlugins={[remarkGfm]} disallowedElements={['p']} unwrapDisallowed>{Title}</Markdown>}
+                    // primary="SaintsField"
                 />
             </ListItem>
             {SubContents.length > 0 && (open ? <ExpandLess /> : <ExpandMore />)}

@@ -82,4 +82,7 @@ root_compact.SubContents.clear()
 list_compact.append(root_node)
 list_compact.extend(sub_list)
 
+if list_compact[0].Title == 'SaintsField':
+    list_compact[0].Title = ''
+
 print(json.dumps(list_compact, cls=EnhancedJSONEncoder, indent=4))
