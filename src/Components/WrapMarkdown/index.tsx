@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import Markdown, {type Options} from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Typography from '@mui/material/Typography';
@@ -8,6 +8,8 @@ import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { PropsWithChildren } from 'react';
 import Tip from './GithubQuote/Tip';
 import Important from './GithubQuote/Important';
+import Note from './GithubQuote/Note';
+import Warning from './GithubQuote/Warning';
 import Style from './index.scss';
 import classNames from 'classnames';
 import Link from '@mui/material/Link/Link';
@@ -92,16 +94,26 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
         p({ children }) {
             return <Typography variant="body1" gutterBottom>{children}</Typography>;
         },
-        blockquote({ children}) {
+        blockquote({ children, node }) {
+            console.log(`node`, node);
+            console.log(`node children`, typeof node!.children);
             // console.log(children)
             // console.log(typeof children);
             // console.log(children);
             if(children && typeof children === 'object') {
-                console.log(children);
+                console.log('children', children);
 
                 const childArray = children as Array<unknown>;
-                if(childArray && childArray.length == 3 && childArray[0] === '\n' && childArray[2] === '\n') {
-                    const {props} = childArray[1] as {
+                if(childArray
+                        // && childArray.length == 3
+                        && childArray[0] === '\n'
+                        && childArray[childArray.length - 1] === '\n'
+                ) {
+                    const [_, firstChildInGroup, ...leftChildrenInGroup] = childArray;
+
+                    const leftChildrenInGroupAsObj = leftChildrenInGroup as Array<string>;
+
+                    const {props} = firstChildInGroup as {
                         props: {
                             children: string[]
                         }
@@ -112,15 +124,26 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
                         console.log(firstChild);
                         const regex = /\[!(\w+)\]\n(.*?)$/;
                         const matches = firstChild.match(regex);
+
                         if (matches) {
                             const type = matches[1]; // "NOTE"
                             const noteContent = matches[2]; // "Some Note Content Goes Here\nWith multiple lines"
-                            console.log(type, noteContent);
+                            // console.log(type, noteContent);
+
+                            const contentBody = <Fragment>
+                                <Typography variant="body1" gutterBottom>{noteContent}{leftChildren}</Typography>
+                                <Typography variant="body1" gutterBottom>{leftChildrenInGroupAsObj}</Typography>
+                            </Fragment>;
+
                             switch(type.toLowerCase()) {
                                 case "tip":
-                                    return <Tip>{noteContent}{leftChildren}</Tip>;
+                                    return <Tip>{contentBody}</Tip>;
                                 case "important":
-                                    return <Important>{noteContent}{leftChildren}</Important>;
+                                    return <Important>{contentBody}</Important>;
+                                case "note":
+                                    return <Note>{contentBody}</Note>;
+                                case "warning":
+                                    return <Warning>{contentBody}</Warning>;
                                 default:
                                     break;
                             }

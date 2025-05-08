@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useContext, useState, useMemo, useRef } from 'react';
+import { useContext, useState, useMemo, useRef, useEffect } from 'react';
 import { Context, ThemeType } from "~/Components/Theme/ThemeProvider";
 import { useTheme } from '@mui/material/styles';
 import ReadMeData from "~/Data/ReadMe.json";
@@ -33,6 +33,7 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
     const navigate = useNavigate();
 
     const { pathname } = useLocation();
+    console.log(`pathname`, pathname);
 
     const uri = PrefixUri(prefix, TitleId);
 
@@ -60,7 +61,9 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
 
         console.log(prePath, preUri);
 
-        return prePath.startsWith(preUri);
+        const activeResult = prePath.startsWith(preUri);
+
+        return activeResult;
 
         // if(pathname.startsWith(`/${uri}`)) {
         //     console.log(`pathname=${pathname}, uri=${uri}, ${pathname.replace(`/${uri}`, '')}`);
@@ -79,6 +82,13 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
             navigate(uri);
         }
     };
+
+    useEffect(() => {
+        if(curActive && !open)
+        {
+            setOpen(curActive);
+        }
+    }, [curActive]);
 
     return (<List key={TitleId} dense disablePadding={true}>
         <ListItemButton onClick={handleClick} sx={{pl}} selected={curActive}>
