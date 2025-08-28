@@ -4,6 +4,7 @@ import path from 'path';
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import paths from './paths';
 import FaviconsWebpackPlugin from 'favicons-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 module.exports = () => ({
     entry: paths.entryPath,
@@ -185,5 +186,6 @@ module.exports = () => ({
             }
         }),
         new FaviconsWebpackPlugin('./src/Images/favicon.png'),
+        new CopyWebpackPlugin({patterns: [ { from: 'Src/Assets', to: 'assets' } ]}),
     ]
 });
