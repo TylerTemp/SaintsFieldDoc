@@ -186,6 +186,6 @@ module.exports = () => ({
             }
         }),
         new FaviconsWebpackPlugin('./src/Images/favicon.png'),
-        new CopyWebpackPlugin({patterns: [ { from: 'Src/Assets', to: 'assets' } ]}),
+        new CopyWebpackPlugin({patterns: [ { from: 'src/Assets', to: 'assets' } ]}),
     ]
 });

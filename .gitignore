@@ -121,3 +121,6 @@ $RECYCLE.BIN/
 
 /dist
 /src/Data/ReadMe.json
+/src/Assets/
+/src/Assets/*
+!/src/Assets/.gitkeep

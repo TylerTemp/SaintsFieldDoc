@@ -1,15 +1,23 @@
 from __future__ import annotations
 import sys
 import os
-import re
 import json
 import dataclasses
 from dataclasses import dataclass
 import re
-from time import altzone
-
+import colorlog
 import requests
+import logging
 
+
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+	'%(log_color)s[%(levelname)s:%(name)s] %(message)s'))
+
+logger = colorlog.getLogger('read_me_parser')
+logger.addHandler(handler)
+# logging.basicConfig(level=logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, o):
@@ -94,7 +102,7 @@ markdown_image_pattern = re.compile(r'!\[([^\]]*)\]\(([^)]+)\)')
 
 def get_github_resources(url: str) -> requests.Response:
     # file_base_name = os.path.basename(url)
-    resp = requests.head(url, follow_redirects=False)
+    resp = requests.head(url, allow_redirects=False)
     assert resp.status_code == 302, f'[{resp.status_code}: {url}]: {resp.text}'
     redirected_url = resp.headers['Location']
 
@@ -114,6 +122,8 @@ def get_ext_from_response(remote_res: requests.Response) -> str:
             return '.gif'
         elif 'image/webp' in content_type:
             return '.webp'
+        elif 'image/svg+xml' in content_type:
+            return '.svg'
         elif 'video/mp4' in content_type:
             return '.mp4'
         elif 'video/webm' in content_type:
@@ -126,15 +136,19 @@ def get_ext_from_response(remote_res: requests.Response) -> str:
             return '.wav'
         elif 'audio/ogg' in content_type:
             return '.ogg'
-    raise ValueError(f'Unsupported Content-Type: {content_type}')
+    raise ValueError(f'Unsupported Content-Type: {content_type} for {remote_res.url}')
 
 
-def get_or_download_resource(url: str, resource_folder: str) -> str:
+def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -> str:
+    # logger.debug(url)
     file_base_name = os.path.basename(url)
+
+    os.makedirs(resource_folder, exist_ok=True)
+
     for file_name in os.listdir(resource_folder):
         exist_file_base: str = os.path.splitext(file_name)[0]
         if exist_file_base == file_base_name:
-            return f'{resource_folder}/{file_name}'
+            return f'/assets{resource_id}/{file_name}'
 
     else:
         remote_res = get_github_resources(url)
@@ -143,26 +157,33 @@ def get_or_download_resource(url: str, resource_folder: str) -> str:
 
         os.makedirs(resource_folder, exist_ok=True)
 
-        with open(os.path.join(resource_folder, file_full_name)) as f:
+        with open(os.path.join(resource_folder, file_full_name), 'wb') as f:
             f.write(remote_res.content)
-        return f'{resource_folder}/{file_full_name}'
+        return f'/assets{resource_id}/{file_full_name}'
 
 
 def convert_image(line: str, resource_id: str, resource_folder: str) -> str:
+    logger.debug(f'Converting image for {resource_id}: {line}')
     match = markdown_image_pattern.match(line)
+    # print(line, match)
     alt_text = match.group(1)
     url = match.group(2)
 
     if not url.startswith('https://github.com/TylerTemp/SaintsField/assets'):
         return line
 
-    use_url: str = get_or_download_resource(url, resource_folder)
+    use_url: str = get_or_download_resource(url, resource_id, resource_folder)
 
     return f'![{alt_text}]({use_url})'
 
 def convert_link(line: str, resource_id: str, resource_folder: str) -> str:
+    logger.debug(f'Converting link for {resource_id}: {line}')
+
     square_split: list[str] = line.split('](')
-    url = square_split[1][:-1]
+    if len(square_split) < 2:
+        return line
+
+    url = square_split[-1][:-1]
 
     if not url.startswith('https://github.com/TylerTemp/SaintsField/assets'):
         return line
@@ -170,14 +191,18 @@ def convert_link(line: str, resource_id: str, resource_folder: str) -> str:
     square_split.pop(-1)
     alt_text = ']('.join(square_split)[1:]
 
-    if alt_text.startswith('![') and alt_text.endswith(')'):
+    logger.debug(f'link alt text: {alt_text}, URL: {url}')
+
+    if alt_text.startswith('![video](') and alt_text.endswith(')'):
         alt_text = convert_image(alt_text, resource_id, resource_folder)
+        logger.debug(f'link alt text final: {alt_text}')
 
-    use_url: str = get_or_download_resource(url, resource_folder)
+    use_url: str = get_or_download_resource(url, resource_id, resource_folder)
+    logger.debug(f'Converting link get {use_url} from {url}')
 
-    return f'![{alt_text}]({use_url})'
+    return f'[{alt_text}]({use_url})'
 
-def convert_content(content: str, root: str) -> str:
+def convert_content(content: str, root: str, resource_folder: str) -> str:
 
     lines: list[str] = []
     for line in content.splitlines():
@@ -186,10 +211,15 @@ def convert_content(content: str, root: str) -> str:
 
         result_line: str = line
 
-        if l_strip.startswith('![') and l_strip.endswith(')'):
-            result_line = indent_space * ' ' + convert_link(l_strip, root)
-        elif l_strip.startswith('[') and l_strip.endswith(')'):
-            result_line = indent_space * ' ' + convert_image(l_strip, root)
+        strip: str = line.strip()
+
+        if strip.startswith('![') and strip.endswith(')'):
+            result_line = indent_space * ' ' + convert_image(l_strip, root, resource_folder)
+        elif strip.startswith('[') and strip.endswith(')'):
+            # print(f'processing link line: {line}')
+            result_line = indent_space * ' ' + convert_link(l_strip, root, resource_folder)
+        # else:
+        #     print(strip)
 
         lines.append(result_line)
 
@@ -201,35 +231,42 @@ def make_id(root: str, title_id: str) -> str:
         return '/'
     return f'{root}/{title_id}'
 
-def make_linked_item(item: TitleAndContentCompact, root: str):
+def make_linked_item(item: TitleAndContentCompact, root: str, resource_folder: str) -> TitleAndContentCompact:
     raw_content: str = item.Content
     # linked_content = convert_link(raw_content, root)
 
-    sub_id: str = make_id(root, item.TitleId)
+    # logger.debug(item.TitleId)
 
-    linked_content = convert_content(raw_content, root)
+    # sub_id: str = make_id(root, item.TitleId)
+    # logger.debug(f'Processing linked item id: {sub_id}')
+
+    linked_content = convert_content(raw_content, root, resource_folder)
+    sub_contents: list[TitleAndContentCompact] = []
+    for sub in item.SubContents:
+        sub_contents.append(make_linked_item(sub, make_id(root, sub.TitleId), f'{resource_folder}/{sub.TitleId}'))
 
     return TitleAndContentCompact(
         Title=item.Title,
         TitleId=item.TitleId,
         TitleLevel=item.TitleLevel,
         Content=linked_content,
-        SubContents=list(map(lambda sub: make_linked_item(sub, make_id(sub_id, sub.TitleId)), item.SubContents))
+        SubContents=sub_contents
     )
 
 
-def make_linked_list(list_compact: list[TitleAndContentCompact], root: str):
+def make_linked_list(list_compact: list[TitleAndContentCompact], root: str, project_folder: str):
     for item in list_compact:
         title_id: str = item.TitleId
-        yield make_linked_item(item, f'{root}/{title_id}')
-
-
-
-linked_lis = list(make_linked_list(list_compact, ''))
+        resource_id: str = make_id(root, title_id)
+        logger.debug(f'Processing id: {resource_id}')
+        resource_folder: str = os.path.join(project_folder, title_id)
+        yield make_linked_item(item, resource_id, resource_folder)
 
 proj_folder = os.path.normpath(os.path.join(__file__, '..', '..'))
 
+linked_lis = list(make_linked_list(list_compact, '', os.path.join(proj_folder, 'src', 'Assets')))
+
 json_path = os.path.join(proj_folder, 'src', 'Data', 'ReadMe.json')
 
-# with open(json_path, 'w', encoding='utf-8') as f:
-#     json.dump(linked_lis, f, cls=EnhancedJSONEncoder, indent=4)
+with open(json_path, 'w', encoding='utf-8') as f:
+    json.dump(linked_lis, f, cls=EnhancedJSONEncoder, indent=4)
