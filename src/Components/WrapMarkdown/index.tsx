@@ -13,6 +13,7 @@ import Warning from './GithubQuote/Warning';
 import Style from './index.scss';
 import classNames from 'classnames';
 import Link from '@mui/material/Link/Link';
+import Caution from './GithubQuote/Caution';
 
 type MarkdownProps = Pick<Options, "disallowedElements" | "unwrapDisallowed">;
 
@@ -136,14 +137,16 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
                             </Fragment>;
 
                             switch(type.toLowerCase()) {
+                                case "note":
+                                    return <Note>{contentBody}</Note>;
                                 case "tip":
                                     return <Tip>{contentBody}</Tip>;
                                 case "important":
                                     return <Important>{contentBody}</Important>;
-                                case "note":
-                                    return <Note>{contentBody}</Note>;
                                 case "warning":
                                     return <Warning>{contentBody}</Warning>;
+                                case "caution":
+                                    return <Caution>{contentBody}</Caution>;
                                 default:
                                     break;
                             }
