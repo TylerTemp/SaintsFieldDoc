@@ -148,6 +148,7 @@ def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -
     for file_name in os.listdir(resource_folder):
         exist_file_base: str = os.path.splitext(file_name)[0]
         if exist_file_base == file_base_name:
+            logger.debug(f'Found existing resource for {url}: /assets{resource_id}/{file_name}')
             return f'/assets{resource_id}/{file_name}'
 
     else:
@@ -159,6 +160,7 @@ def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -
 
         with open(os.path.join(resource_folder, file_full_name), 'wb') as f:
             f.write(remote_res.content)
+        logger.debug(f'Write resource for {url}: /assets{resource_id}/{file_full_name}')
         return f'/assets{resource_id}/{file_full_name}'
 
 
@@ -169,7 +171,7 @@ def convert_image(line: str, resource_id: str, resource_folder: str) -> str:
     alt_text = match.group(1)
     url = match.group(2)
 
-    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets'):
+    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets') and not url.startswith('https://github.com/user-attachments/assets/'):
         return line
 
     use_url: str = get_or_download_resource(url, resource_id, resource_folder)
@@ -185,7 +187,8 @@ def convert_link(line: str, resource_id: str, resource_folder: str) -> str:
 
     url = square_split[-1][:-1]
 
-    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets'):
+    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets') and not url.startswith('https://github.com/user-attachments/assets/'):
+        logger.debug(f'Skip link for {resource_id}: {url}')
         return line
 
     square_split.pop(-1)
