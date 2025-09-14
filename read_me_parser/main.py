@@ -141,6 +141,9 @@ def get_ext_from_response(remote_res: requests.Response) -> str:
 
 def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -> str:
     # logger.debug(url)
+
+    use_resource_id: str = '' if resource_id == '/' else resource_id
+
     file_base_name = os.path.basename(url)
 
     os.makedirs(resource_folder, exist_ok=True)
@@ -148,8 +151,8 @@ def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -
     for file_name in os.listdir(resource_folder):
         exist_file_base: str = os.path.splitext(file_name)[0]
         if exist_file_base == file_base_name:
-            logger.debug(f'Found existing resource for {url}: /assets{resource_id}/{file_name}')
-            return f'/assets{resource_id}/{file_name}'
+            logger.debug(f'Found existing resource for {url}: /assets{use_resource_id}/{file_name}')
+            return f'/assets{use_resource_id}/{file_name}'
 
     else:
         remote_res = get_github_resources(url)
@@ -160,12 +163,12 @@ def get_or_download_resource(url: str, resource_id: str, resource_folder: str) -
 
         with open(os.path.join(resource_folder, file_full_name), 'wb') as f:
             f.write(remote_res.content)
-        logger.debug(f'Write resource for {url}: /assets{resource_id}/{file_full_name}')
-        return f'/assets{resource_id}/{file_full_name}'
+        logger.debug(f'Write resource for {url}: /assets{use_resource_id}/{file_full_name}')
+        return f'/assets{use_resource_id}/{file_full_name}'
 
 
 def convert_image(line: str, resource_id: str, resource_folder: str) -> str:
-    logger.debug(f'Converting image for {resource_id}: {line}')
+    logger.debug(f'Converting image for {resource_id}: {line}; resource_id={resource_id}')
     match = markdown_image_pattern.match(line)
     # print(line, match)
     alt_text = match.group(1)
@@ -187,23 +190,31 @@ def convert_link(line: str, resource_id: str, resource_folder: str) -> str:
 
     url = square_split[-1][:-1]
 
-    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets') and not url.startswith('https://github.com/user-attachments/assets/'):
-        logger.debug(f'Skip link for {resource_id}: {url}')
-        return line
-
     square_split.pop(-1)
     alt_text = ']('.join(square_split)[1:]
 
     logger.debug(f'link alt text: {alt_text}, URL: {url}')
 
-    if alt_text.startswith('![video](') and alt_text.endswith(')'):
-        alt_text = convert_image(alt_text, resource_id, resource_folder)
+    new_alt_text: str = alt_text
+
+    if alt_text.startswith('![') and alt_text.endswith(')'):
+        new_alt_text = convert_image(alt_text, resource_id, resource_folder)
         logger.debug(f'link alt text final: {alt_text}')
+
+    alt_text_changed: bool = alt_text != new_alt_text
+
+    if not url.startswith('https://github.com/TylerTemp/SaintsField/assets') and not url.startswith('https://github.com/user-attachments/assets/'):
+        if alt_text_changed:
+            logger.debug(f'Update link for image {resource_id} to {new_alt_text}: {url}')
+            return f'[{new_alt_text}]({url})'
+
+        logger.debug(f'Skip link for {resource_id}: {url}')
+        return line
 
     use_url: str = get_or_download_resource(url, resource_id, resource_folder)
     logger.debug(f'Converting link get {use_url} from {url}')
 
-    return f'[{alt_text}]({use_url})'
+    return f'[{new_alt_text}]({use_url})'
 
 def convert_content(content: str, root: str, resource_folder: str) -> str:
 
