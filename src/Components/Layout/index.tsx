@@ -27,6 +27,7 @@ import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import ListItemIcon from '@mui/material/ListItemIcon/ListItemIcon';
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import ArticleTwoToneIcon from '@mui/icons-material/ArticleTwoTone';
 
 const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubContents}, prefix=null, pl=0}: {titleAndContent: TitleAndContent, prefix: string|null, pl?: number}) => {
 
@@ -96,6 +97,9 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
                 {TitleId === "" && <ListItemIcon>
                     <HomeTwoToneIcon />
                 </ListItemIcon>}
+                {/* {SubContents.length > 0 && Content !== null && Content.length > 0 && <ListItemIcon>
+                    <ArticleTwoToneIcon  />
+                </ListItemIcon>} */}
                 <ListItemText
                     primary={TitleId === ""
                         ? "SaintsField"
@@ -103,6 +107,7 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
                     // primary="SaintsField"
                 />
             </ListItem>
+            {SubContents.length > 0 && Content !== null && Content.length > 0 && <ArticleTwoToneIcon sx={{fontSize: '0.9rem'}} />}
             {SubContents.length > 0 && (open ? <ExpandLess /> : <ExpandMore />)}
         </ListItemButton>
         {TitleId === "" && <>
