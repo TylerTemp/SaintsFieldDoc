@@ -1,10 +1,10 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useContext } from 'react';
 import Markdown, {type Options} from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import Typography from '@mui/material/Typography';
-
+import { Context, ThemeType } from "~/Components/Theme/ThemeProvider";
 import {Prism, SyntaxHighlighterProps} from 'react-syntax-highlighter';
-import { materialOceanic } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { materialOceanic as darkTheme, solarizedlight as lightTheme } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import { PropsWithChildren } from 'react';
 import Tip from './GithubQuote/Tip';
 import Important from './GithubQuote/Important';
@@ -20,13 +20,18 @@ type MarkdownProps = Pick<Options, "disallowedElements" | "unwrapDisallowed">;
 const SyntaxHighlighter = Prism as typeof React.Component<SyntaxHighlighterProps>;
 
 export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChildren<MarkdownProps>) => {
+
+    const { theme } = useContext(Context);
+
+    const codeStyle = theme === ThemeType.Light? lightTheme: darkTheme;
+
     return (<Markdown disallowedElements={disallowedElements} unwrapDisallowed={unwrapDisallowed} remarkPlugins={[remarkGfm]} components={{
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
 
             return !inline && match ? (
-                <SyntaxHighlighter style={materialOceanic} PreTag="div" language={match[1]} {...props}>
+                <SyntaxHighlighter style={codeStyle} PreTag="div" language={match[1]} {...props}>
                     {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
             ) : (
