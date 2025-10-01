@@ -56,6 +56,7 @@ interface Props {
 }
 
 export default({isDark, onChange}: Props) => <FormControlLabel
+    sx={{marginRight: 0}}
     control={<MaterialUISwitch sx={{ m: 1 }} checked={isDark} onChange={(evt: React.ChangeEvent<HTMLInputElement>) => onChange((evt.target as HTMLInputElement).checked)} />}
     label=""
 />

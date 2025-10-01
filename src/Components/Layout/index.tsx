@@ -28,6 +28,9 @@ import ListItemIcon from '@mui/material/ListItemIcon/ListItemIcon';
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import ArticleTwoToneIcon from '@mui/icons-material/ArticleTwoTone';
+import Drawer from '@mui/material/Drawer';
+import Fab from '@mui/material/Fab';
+import MenuOpenTwoToneIcon from '@mui/icons-material/MenuOpenTwoTone';
 
 const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubContents}, prefix=null, pl=0}: {titleAndContent: TitleAndContent, prefix: string|null, pl?: number}) => {
 
@@ -198,34 +201,52 @@ export default () => {
     //     resizableRef.current?.updateSize({width: MinWidth});
     // }
 
+    const [mobileSideOpen, setMobileSideOpen] = useState(false);
+
     return <>
-        <Box sx={{position: 'fixed', top: 0, right: 0}}>
+        <Box sx={{position: 'fixed', top: 0, right: 4}}>
             <DarkLightToggle isDark={theme === ThemeType.Dark} onChange={toDark => setTheme(toDark? ThemeType.Dark: ThemeType.Light)} />
+            <Fab color="default" size='small' sx={{m: 1, display: { xs: 'inline-flex', sm: 'none' }}} onClick={() => setMobileSideOpen(true)}>
+                <MenuOpenTwoToneIcon />
+            </Fab> 
         </Box>
 
         <Box sx={{ display: 'flex'}}>
-            {/* <Box sx={{minWidth: 0}}> */}
-            <Resizable
-                enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
-                defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
-                ref={ref => { resizableRef.current = ref; }}
-                onResize={ResizeCallback}
-                // style={{position: 'sticky', top: 0}}
-                style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}
-            >
-                <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)', position: 'sticky', top: 0}}>
-                    <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
-                        [RotateStyle.rotate180]: !enableResize,
-                    })}}/>}>
-                        {enableResize && "Hide"}
-                    </Button>
-                    <Collapse in={enableResize}>
-                        <Divider />
-                        {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
-                    </Collapse>
-                </Paper>
-            </Resizable>
-            {/* </Box> */}
+            <Box sx={{ display: { xs: 'none', sm: 'block' }}}>
+                <Resizable
+                    enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
+                    defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
+                    ref={ref => { resizableRef.current = ref; }}
+                    onResize={ResizeCallback}
+                    // style={{position: 'sticky', top: 0}}
+                    style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}
+                >
+                    <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)', position: 'sticky', top: 0}}>
+                        <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
+                            [RotateStyle.rotate180]: !enableResize,
+                        })}}/>}>
+                            {enableResize && "Hide"}
+                        </Button>
+                        <Collapse in={enableResize}>
+                            <Divider />
+                            {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
+                        </Collapse>
+                    </Paper>
+                </Resizable>
+            </Box>
+
+            {/* <Fab color="primary" aria-label="add">
+                <AddIcon />
+            </Fab> */}
+
+            <Drawer anchor='right' open={mobileSideOpen} onClose={() => setMobileSideOpen(false)} sx={{ display: { xs: 'block', sm: 'none' }}}>
+                
+                <Box sx={{ width: 250 }} role="presentation" onClick={() => setMobileSideOpen(false)}>
+                    {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
+                </Box>
+
+            </Drawer>
+
             <Box sx={{width: 1, minWidth: 0}}>
                 <Outlet />
             </Box>
