@@ -32,7 +32,7 @@ import Drawer from '@mui/material/Drawer';
 import Fab from '@mui/material/Fab';
 import MenuOpenTwoToneIcon from '@mui/icons-material/MenuOpenTwoTone';
 
-const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubContents}, prefix=null, pl=0}: {titleAndContent: TitleAndContent, prefix: string|null, pl?: number}) => {
+const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubContents}, prefix=null, pl=0, itemAction}: {titleAndContent: TitleAndContent, prefix: string|null, pl?: number, itemAction: () => void}) => {
 
     const navigate = useNavigate();
 
@@ -84,6 +84,7 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
         setOpen(orl => !orl);
         if(Content !== "") {
             navigate(uri);
+            itemAction();
         }
     };
 
@@ -129,6 +130,7 @@ const RenderTitleAndContent = ({titleAndContent: {Title, TitleId, Content, SubCo
                 titleAndContent={eachContent}
                 prefix={PrefixUri(prefix, TitleId)}
                 pl={pl + 4}
+                itemAction={itemAction}
             />)}
         </Collapse>}
     </List>);
@@ -229,7 +231,7 @@ export default () => {
                         </Button>
                         <Collapse in={enableResize}>
                             <Divider />
-                            {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
+                            {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => {}} />)}
                         </Collapse>
                     </Paper>
                 </Resizable>
@@ -241,8 +243,8 @@ export default () => {
 
             <Drawer anchor='right' open={mobileSideOpen} onClose={() => setMobileSideOpen(false)} sx={{ display: { xs: 'block', sm: 'none' }}}>
                 
-                <Box sx={{ width: 250 }} role="presentation" onClick={() => setMobileSideOpen(false)}>
-                    {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null}  />)}
+                <Box sx={{ width: 250 }} role="presentation">
+                    {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => setMobileSideOpen(false)}  />)}
                 </Box>
 
             </Drawer>
