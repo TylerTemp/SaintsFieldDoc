@@ -160,6 +160,13 @@ const EnableOtherType: Partial<Enable> = {
 const DefaultWidth = 180;
 const MinWidth = 50;
 
+const scrollToTop = () => {
+    window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth',
+    });
+}
 
 export default () => {
     // console.log(rotate180);
@@ -229,17 +236,20 @@ export default () => {
                             {enableResize && "Hide"}
                         </ListItemButton>
                     </Paper>
-                    <Collapse in={enableResize}>
+                    <Collapse in={enableResize} component={"nav"}>
                         <Divider />
-                        {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => {}} />)}
+                        {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={scrollToTop} />)}
                     </Collapse>
                 </Paper>
             </Resizable>
 
             <Drawer anchor='right' open={mobileSideOpen} onClose={() => setMobileSideOpen(false)} sx={{ display: { xs: 'block', sm: 'none' }}}>
                 
-                <Box sx={{ width: 250 }} role="presentation">
-                    {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => setMobileSideOpen(false)}  />)}
+                <Box sx={{ width: 250 }} role="navigation" component={"nav"}>
+                    {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => {
+                        setMobileSideOpen(false);
+                        scrollToTop();
+                    }}  />)}
                 </Box>
 
             </Drawer>

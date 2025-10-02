@@ -106,7 +106,7 @@ export default () => {
         </Helmet>
 
         <Box>
-            <Breadcrumbs>{breadcrumbInfos.map(({TitleId, Title, URI, HasContent}, index) => {
+            <Breadcrumbs component={"nav"}>{breadcrumbInfos.map(({TitleId, Title, URI, HasContent}, index) => {
                 if(TitleId === "") {
                     return <MuiLink key="" to="/" component={Link}><HomeIcon /></MuiLink>;
                 }
@@ -121,10 +121,12 @@ export default () => {
                 </MuiLink>;
             })}</Breadcrumbs>
 
-            <Typography variant="h3" gutterBottom sx={{wordBreak: 'break-all'}}>
-                <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{searchTarget.Title}</WrapMarkdown>
-            </Typography>
-            {searchTarget.Content !== "" && <WrapMarkdown>{searchTarget.Content}</WrapMarkdown>}
+            <article>
+                <Typography variant="h3" gutterBottom sx={{wordBreak: 'break-all'}} component={"header"}>
+                    <WrapMarkdown disallowedElements={['p']} unwrapDisallowed>{searchTarget.Title}</WrapMarkdown>
+                </Typography>
+                {searchTarget.Content !== "" && <WrapMarkdown>{searchTarget.Content}</WrapMarkdown>}
+            </article>
         </Box>
     </Container>);
 
