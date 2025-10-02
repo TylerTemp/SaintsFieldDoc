@@ -125,7 +125,7 @@ export default () => {
             <title>Search | SaintsField</title>
         </Helmet>
 
-        <FormControl fullWidth sx={{ m: 1 }} variant="outlined" style={{marginTop: 50}}>
+        <FormControl fullWidth sx={{ m: 1 }} variant="outlined" style={{marginTop: 50}} component={"search"}>
             <InputLabel htmlFor="outlined-adornment-search">Search</InputLabel>
             <OutlinedInput
                 id="outlined-adornment-search"

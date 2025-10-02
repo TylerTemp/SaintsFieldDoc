@@ -105,7 +105,7 @@ export default () => {
             </title>
         </Helmet>
 
-        <Box>
+        <Box component={"main"}>
             <Breadcrumbs component={"nav"}>{breadcrumbInfos.map(({TitleId, Title, URI, HasContent}, index) => {
                 if(TitleId === "") {
                     return <MuiLink key="" to="/" component={Link}><HomeIcon /></MuiLink>;
