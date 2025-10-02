@@ -18,7 +18,6 @@ import Collapse from '@mui/material/Collapse/Collapse';
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import DarkLightToggle from './DarkLightToggle';
-import Button from '@mui/material/Button';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import RotateStyle from "~/Components/RotateClass/index.css";
 import classNames from 'classnames';
@@ -168,11 +167,9 @@ export default () => {
     const { theme, setTheme } = useContext(Context);
 
     const curTheme = useTheme();
-    const matches = useMediaQuery(curTheme.breakpoints.down('sm'));
+    const isSmall = useMediaQuery(curTheme.breakpoints.down('sm'));
 
-    const initIsMobile: boolean = useMemo(() => {
-        return matches;
-    }, []);
+    const initIsMobile: boolean = useMemo(() => isSmall, []);
 
     const readMe: TitleAndContent[] = ReadMeData;
 
@@ -206,7 +203,7 @@ export default () => {
     const [mobileSideOpen, setMobileSideOpen] = useState(false);
 
     return <>
-        <Box sx={{position: 'fixed', top: 0, right: 4}}>
+        <Box sx={{position: 'fixed', top: 0, right: 4, zIndex: 1}}>
             <DarkLightToggle isDark={theme === ThemeType.Dark} onChange={toDark => setTheme(toDark? ThemeType.Dark: ThemeType.Light)} />
             <Fab color="default" size='small' sx={{m: 1, display: { xs: 'inline-flex', sm: 'none' }}} onClick={() => setMobileSideOpen(true)}>
                 <MenuOpenTwoToneIcon />
@@ -214,32 +211,30 @@ export default () => {
         </Box>
 
         <Box sx={{ display: 'flex'}}>
-            <Box sx={{ display: { xs: 'none', sm: 'block' }}}>
-                <Resizable
-                    enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
-                    defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
-                    ref={ref => { resizableRef.current = ref; }}
-                    onResize={ResizeCallback}
-                    // style={{position: 'sticky', top: 0}}
-                    style={{minWidth: 0, maxHeight: 'calc(100vh - 10px)'}}
-                >
-                    <Paper elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 10px)', position: 'sticky', top: 0}}>
-                        <Button fullWidth onClick={onResizeControlClick} endIcon={<MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
-                            [RotateStyle.rotate180]: !enableResize,
-                        })}}/>}>
+            <Resizable
+                enable={{...EnableOtherType, ...(enableResize? EnableOkType: EnableNotType)}}
+                defaultSize={{ width: initIsMobile? MinWidth: DefaultWidth }}
+                ref={ref => { resizableRef.current = ref; }}
+                onResize={ResizeCallback}
+                // style={{position: 'sticky', top: 0}}
+                style={{minWidth: 0, maxHeight: 'calc(100vh)', display: (isSmall? 'none': undefined)}}
+                handleStyles={{ bottom: { display: 'none' }, bottomRight: { display: 'none' }, bottomLeft: {display: 'none'}, left: { display: 'none' }, top: { display: 'none' }, topLeft: { display: 'none' }, topRight: { display: 'none' } }}
+            >
+                <Paper square elevation={3} sx={{overflowX: 'hidden', maxHeight: 'calc(100vh - 0px)', position: 'sticky', top: 0}}>
+                    <Paper square sx={{position: 'sticky', top: 0, zIndex: 1}}>
+                        <ListItemButton onClick={onResizeControlClick} >
+                            <MenuOpenIcon classes={{root: classNames(RotateStyle.rotateBase, {
+                                [RotateStyle.rotate180]: !enableResize,
+                            })}}/>
                             {enableResize && "Hide"}
-                        </Button>
-                        <Collapse in={enableResize}>
-                            <Divider />
-                            {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => {}} />)}
-                        </Collapse>
+                        </ListItemButton>
                     </Paper>
-                </Resizable>
-            </Box>
-
-            {/* <Fab color="primary" aria-label="add">
-                <AddIcon />
-            </Fab> */}
+                    <Collapse in={enableResize}>
+                        <Divider />
+                        {readMe.map(eachReadMe => <RenderTitleAndContent key={eachReadMe.TitleId} titleAndContent={eachReadMe} prefix={null} itemAction={() => {}} />)}
+                    </Collapse>
+                </Paper>
+            </Resizable>
 
             <Drawer anchor='right' open={mobileSideOpen} onClose={() => setMobileSideOpen(false)} sx={{ display: { xs: 'block', sm: 'none' }}}>
                 

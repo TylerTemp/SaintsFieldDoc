@@ -18,6 +18,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import {default as MuiLink} from '@mui/material/Link/Link';
 import { Helmet } from 'react-helmet-async';
 import WrapMarkdown from '~/Components/WrapMarkdown';
+import { useEffect } from 'react';
 // import { dark } from 'react-syntax-highlighter/dist/cjs/al'
 
 interface BreadcrumbInfo {
@@ -31,6 +32,13 @@ export default () => {
 
     const { pathname } = useLocation();
     console.log(`pathname=${pathname}`);
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    }, [pathname])
 
     const readMe: TitleAndContent[] = ReadMeData;
 
