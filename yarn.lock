@@ -7001,6 +7001,11 @@ ms@2.1.3, ms@^2.0.0, ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
+mui-sonner@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/mui-sonner/-/mui-sonner-1.0.1.tgz#d432f716109d60acbe11133471fe5ce502834994"
+  integrity sha512-vA3pYRSEzKm6CBHTdjiECXuvVZlUvXilgYGx9RXyigGUpVdHUHx3XyFt0BUpe4R+/7s9m70zE+21ygVDCHU9mA==
+
 multicast-dns@^7.2.5:
   version "7.2.5"
   resolved "https://registry.yarnpkg.com/multicast-dns/-/multicast-dns-7.2.5.tgz#77eb46057f4d7adbd16d9290fa7299f6fa64cced"

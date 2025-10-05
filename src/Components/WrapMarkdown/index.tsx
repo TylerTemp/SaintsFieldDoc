@@ -14,10 +14,17 @@ import Style from './index.scss';
 import classNames from 'classnames';
 import Link from '@mui/material/Link/Link';
 import Caution from './GithubQuote/Caution';
+import CopyButton from './CopyButton';
+import Box from '@mui/material/Box';
+import { type SxProps } from '@mui/material';
 
 type MarkdownProps = Pick<Options, "disallowedElements" | "unwrapDisallowed">;
 
 const SyntaxHighlighter = Prism as typeof React.Component<SyntaxHighlighterProps>;
+
+const CopyButtonContent = ({text, sx}: {text: string, sx?: SxProps}) => {
+    return <CopyButton content={text} sx={sx} />;
+}
 
 export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChildren<MarkdownProps>) => {
 
@@ -30,15 +37,19 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
         code({ node, inline, className, children, ...props }: any) {
             const match = /language-(\w+)/.exec(className || '');
 
-            return !inline && match ? (
-                <SyntaxHighlighter style={codeStyle} PreTag="div" language={match[1]} {...props}>
-                    {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
-            ) : (
-                <code className={classNames(className, Style.code)} {...props}>
+            if(!inline && match) {
+                const stringChildren = String(children);
+                return <Box sx={{position: 'relative'}}>
+                        <CopyButtonContent text={stringChildren} sx={{position: 'absolute', top: 8, right: 8, zIndex: 1}} />
+                        <SyntaxHighlighter style={codeStyle} PreTag="div" language={match[1]} {...props}>
+                        {stringChildren.replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                </Box>;
+            }
+
+            return <code className={classNames(className, Style.code)} {...props}>
                     {children}
-                </code>
-            );
+                </code>;
         },
         a({ children, href }) {
             // console.log(children)

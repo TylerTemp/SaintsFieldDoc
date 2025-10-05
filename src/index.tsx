@@ -4,6 +4,7 @@ import { HelmetProvider } from 'react-helmet-async'
 
 import ErrorBoundary from '~/Components/ErrorBoundary'
 import ThemeProvider from '~/Components/Theme/ThemeProvider'
+import ToastContainer from '~/Components/ToastContainer'
 import Layout from './Components/Layout'
 import Section from './Pages/Section'
 import Search from './Pages/Search'
@@ -19,7 +20,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(<>
     <ThemeProvider>
         <CssBaseline />
         <ErrorBoundary>
-            {/* <ToastContainer /> */}
+            <ToastContainer />
             <Router>
                 <HelmetProvider>
                     <Routes>
