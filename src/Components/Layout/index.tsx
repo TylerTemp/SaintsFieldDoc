@@ -210,7 +210,7 @@ export default () => {
     const [mobileSideOpen, setMobileSideOpen] = useState(false);
 
     return <>
-        <Box sx={{position: 'fixed', top: 0, right: 4, zIndex: 1}}>
+        <Box sx={{position: 'fixed', top: 0, right: 4, zIndex: 2}}>
             <DarkLightToggle isDark={theme === ThemeType.Dark} onChange={toDark => setTheme(toDark? ThemeType.Dark: ThemeType.Light)} />
             <Fab color="default" size='small' sx={{m: 1, display: { xs: 'inline-flex', sm: 'none' }}} onClick={() => setMobileSideOpen(true)}>
                 <MenuOpenTwoToneIcon />
