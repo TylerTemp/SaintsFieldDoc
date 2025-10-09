@@ -40,16 +40,16 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
             if(!inline && match) {
                 const stringChildren = String(children);
                 return <Box sx={{position: 'relative'}}>
-                        <CopyButtonContent text={stringChildren} sx={{position: 'absolute', top: 8, right: 8, zIndex: 1}} />
-                        <SyntaxHighlighter style={codeStyle} PreTag="div" language={match[1]} {...props}>
+                    <CopyButtonContent text={stringChildren} sx={{position: 'absolute', top: 8, right: 8, zIndex: 1}} />
+                    <SyntaxHighlighter style={codeStyle} PreTag="div" language={match[1]} {...props}>
                         {stringChildren.replace(/\n$/, '')}
                     </SyntaxHighlighter>
                 </Box>;
             }
 
             return <code className={classNames(className, Style.code)} {...props}>
-                    {children}
-                </code>;
+                {children}
+            </code>;
         },
         a({ children, href }) {
             // console.log(children)
@@ -132,14 +132,23 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
 
                     const {props} = firstChildInGroup as {
                         props: {
-                            children: string[]
+                            children: string[] | string
                         }
                     };
 
-                    if(props && props.children && props.children.length >= 1) {
-                        const [firstChild, ...leftChildren] = props.children;
-                        console.log(firstChild);
-                        const regex = /\[!(\w+)\]\n(.*?)$/;
+                    if(props && props.children && (typeof props.children === 'string' || props.children.length >= 1)) {
+                        // const [firstChild, ...leftChildren] = props.children;
+                        let firstChild: string;
+                        let leftChildren: string[];
+                        if(typeof props.children === 'string') {
+                            firstChild = props.children;
+                            leftChildren = [];
+                        }
+                        else {
+                            [firstChild, ...leftChildren] = props.children;
+                        }
+                        console.log(`firstChild=${firstChild}`);
+                        const regex = /\[!(\w+)\]\n?(.*?)$/;
                         const matches = firstChild.match(regex);
 
                         if (matches) {
@@ -148,8 +157,8 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
                             // console.log(type, noteContent);
 
                             const contentBody = <Fragment>
-                                <Typography variant="body1" gutterBottom>{noteContent}{leftChildren}</Typography>
-                                <Typography variant="body1" gutterBottom>{leftChildrenInGroupAsObj}</Typography>
+                                <Typography variant="body1" gutterBottom component={"span"}>{noteContent}{leftChildren}</Typography>
+                                {leftChildrenInGroupAsObj.length > 0 && <Typography variant="body1" gutterBottom component={"span"}>{leftChildrenInGroupAsObj}</Typography>}
                             </Fragment>;
 
                             switch(type.toLowerCase()) {
