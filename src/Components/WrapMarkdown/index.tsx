@@ -148,7 +148,7 @@ export default ({disallowedElements, unwrapDisallowed, children}: PropsWithChild
                             [firstChild, ...leftChildren] = props.children;
                         }
                         console.log(`firstChild=${firstChild}`);
-                        const regex = /\[!(\w+)\]\n?(.*?)$/;
+                        const regex = /\[!(\w+)\]\n?(.*?)$/s;
                         const matches = firstChild.match(regex);
 
                         if (matches) {
